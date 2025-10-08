@@ -68,7 +68,7 @@ const login = (req, res, next) => {
       refresh_token: refreshToken,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -100,7 +100,7 @@ const refreshToken = (req, res) => {
     });
   } catch (error) {
     error.statusCode = 500;
-    next(error);
+    return next(error);
   }
 };
 
@@ -141,7 +141,7 @@ const getUserById = (req, res, next) => {
     });
   } catch (error) {
     error.statusCode = 500;
-    next(error);
+    return next(error);
   }
 };
 
