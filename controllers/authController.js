@@ -30,8 +30,6 @@ const login = (req, res, next) => {
   try {
     const { mobile, password } = req.body;
 
-    console.log(`${mobile} ${password}`);
-    
     if (!mobile || !password) {
       const error = new Error("Mobile number and password are required");
       error.statusCode = 400;
@@ -70,7 +68,6 @@ const login = (req, res, next) => {
       refresh_token: refreshToken,
     });
   } catch (error) {
-    console.log(`line 71 :: ${error}`);
     next(error);
   }
 };
@@ -108,9 +105,17 @@ const refreshToken = (req, res) => {
 };
 
 // Get user by ID
-const getUserById = (req, res) => {
+const getUserById = (req, res, next) => {
   try {
-    const userId = parseInt(req.query.id);
+    const { id } = req.query;
+
+    if (!id) {
+      const error = Error("id is required");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const userId = parseInt(id);
     const user = users.find((u) => u.id === userId);
 
     if (!user) {
