@@ -30,6 +30,8 @@ const login = (req, res, next) => {
   try {
     const { mobile, password } = req.body;
 
+    console.log(`${mobile} ${password}`);
+    
     if (!mobile || !password) {
       const error = new Error("Mobile number and password are required");
       error.statusCode = 400;
@@ -68,6 +70,7 @@ const login = (req, res, next) => {
       refresh_token: refreshToken,
     });
   } catch (error) {
+    console.log(`line 71 :: ${error}`);
     next(error);
   }
 };

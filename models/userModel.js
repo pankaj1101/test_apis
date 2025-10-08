@@ -2,7 +2,7 @@ const users = [
   {
     id: 1,
     name: "Pankaj Ram",
-    mobile: "9876543210",
+    mobile: 9876543210,
     email: "pankajram1101@gmail.com",
     password: "pass123",
     role: "admin",
@@ -19,7 +19,7 @@ const users = [
   {
     id: 2,
     name: "Jane Smith",
-    mobile: "9999999999",
+    mobile: 9999999999,
     email: "jane.smith@example.com",
     password: "secret456",
     role: "user",
@@ -36,7 +36,7 @@ const users = [
   {
     id: 3,
     name: "Alice Johnson",
-    mobile: "8888888888",
+    mobile: 8888888888,
     email: "alice.j@example.com",
     password: "aliceSecure789",
     role: "editor",
