@@ -14,14 +14,14 @@ const generateAccessToken = (user) => {
       permissions: ["read", "write", "update", "delete"],
     },
     JWT_SECRET,
-    { expiresIn: "10s" }
+    { expiresIn: "1m" }
   );
 };
 
 // Generate Refresh Token
 const generateRefreshToken = (user) => {
   return jwt.sign({ id: user.id, mobile: user.mobile }, JWT_REFRESH_SECRET, {
-    expiresIn: "30s",
+    expiresIn: "2m",
   });
 };
 
