@@ -14,14 +14,14 @@ const generateAccessToken = (user) => {
       permissions: ["read", "write", "update", "delete"],
     },
     JWT_SECRET,
-    { expiresIn: "1m" }
+    { expiresIn: "10sec" }
   );
 };
 
 // Generate Refresh Token
 const generateRefreshToken = (user) => {
   return jwt.sign({ id: user.id, mobile: user.mobile }, JWT_REFRESH_SECRET, {
-    expiresIn: "2m",
+    expiresIn: "1min",
   });
 };
 
@@ -96,6 +96,7 @@ const refreshToken = (req, res) => {
 
       return res.json({
         access_token: newAccessToken,
+        refresh_token: refresh_token
       });
     });
   } catch (error) {
@@ -169,4 +170,78 @@ const logout = (req, res) => {
   return res.json({ message: "Logout successful. Refresh token invalidated." });
 };
 
-module.exports = { login, refreshToken, getUserById, logout };
+
+const dashboardOverview = (req, res, next) => {
+  try {
+    return res.status(200).json({
+      "success": true,
+      "status": 200,
+      "message": "Fetched successfully",
+      "data": {
+        "name": "Pankaj Ram",
+        "role": "Administrator",
+        "profile_image": "https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg",
+        "total_users": "1254",
+        "total_revenue": "245000",
+        "total_orders": "534",
+        "pending_orders": "24"
+      }
+    });
+  } catch (error) {
+    error.statusCode = 500;
+    return next(error);
+  }
+};
+const recentTransaction = (req, res, next) => {
+  try {
+    return res.status(200).json({
+      "success": true,
+      "status": 200,
+      "message": "Fetched successfully",
+      "data": [
+        {
+          "order_id": "ORD12345",
+          "customer_name": "John Doe",
+          "amount": "150.00",
+          "date": "2023-09-01",
+          "status": "Success"
+        },
+        {
+          "order_id": "ORD12346",
+          "customer_name": "Jane Smith",
+          "amount": "250.00",
+          "date": "2023-09-02",
+          "status": "Pending"
+        },
+        {
+          "order_id": "ORD12347",
+          "customer_name": "Alice Johnson",
+          "amount": "300.00",
+          "date": "2023-09-03",
+          "status": "Success"
+        },
+        {
+          "order_id": "ORD12348",
+          "customer_name": "Bob Brown",
+          "amount": "120.00",
+          "date": "2023-09-04",
+          "status": "Failed"
+        },
+        {
+          "order_id": "ORD12349",
+          "customer_name": "Charlie Davis",
+          "amount": "180.00",
+          "date": "2023-09-05",
+          "status": "Success"
+        }
+
+      ],
+
+    });
+  } catch (error) {
+    error.statusCode = 500;
+    return next(error);
+  }
+};
+
+module.exports = { login, refreshToken, getUserById, logout, dashboardOverview, recentTransaction };

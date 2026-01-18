@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const authRoutes = require("./routes/authRoutes");
 const errorHandler = require("./middleware/errorHandler");
@@ -7,7 +8,16 @@ const app = express();
 const PORT = 3000;
 
 app.use(bodyParser.json());
-
+app.use(
+  cors({
+    origin: "*", // For demo (allow all)
+    // origin: "http://localhost:5000",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: false,
+  })
+);
+app.options(/.*/, cors());
 // Mount routes
 app.use("/api", authRoutes);
 
