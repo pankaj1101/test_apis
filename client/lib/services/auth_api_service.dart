@@ -54,12 +54,12 @@ class AuthApiService {
     }
   }
 
-  Future<Map<String, dynamic>> refreshToken() async {
+  Future<Map<String, dynamic>> refreshTokenApiCall() async {
     try {
-      final refreshToken1 = await PrefService.getRefreshToken();
+      final refreshToken = await PrefService.getRefreshToken();
       final Response response = await DioClient.dio.post(
         ApiEndpoint.refreshToken,
-        data: {"refresh_token": refreshToken1},
+        data: {"refresh_token": refreshToken},
       );
       return response.data as Map<String, dynamic>;
     } on DioException catch (e) {

@@ -3,8 +3,6 @@ import 'package:client/model/recent_transaction.dart';
 import 'package:client/services/auth_api_service.dart';
 import 'package:client/services/session_manager.dart';
 import 'package:client/utils/amount_formatter.dart';
-import 'package:client/view/login_screen.dart';
-import 'package:client/view/profle_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 

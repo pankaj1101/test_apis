@@ -53,8 +53,10 @@ class DioClient {
                 if (_isRefreshing) {
                   _retryQueue.add(() async {
                     final newToken = await PrefService.getAccessToken();
+
                     requestOptions.headers["Authorization"] =
                         "Bearer $newToken";
+                    
                     final response = await dio.fetch(requestOptions);
                     handler.resolve(response);
                   });
@@ -65,7 +67,7 @@ class DioClient {
 
                 try {
                   final authApi = AuthApiService();
-                  final refreshResponse = await authApi.refreshToken();
+                  final refreshResponse = await authApi.refreshTokenApiCall();
 
                   final newAccessToken = refreshResponse["access_token"];
                   final newRefreshToken = refreshResponse["refresh_token"];
@@ -97,7 +99,7 @@ class DioClient {
                   _retryQueue.clear();
                   await PrefService.clearAll();
                   AppNavigator.navKey.currentState?.pushNamedAndRemoveUntil(
-                    "/login",
+                    ApiEndpoint.login,
                     (route) => false,
                   );
                   return handler.next(error);
