@@ -1,4 +1,3 @@
-import 'package:client/view/dashboard_screen.dart';
 import 'package:client/services/auth_api_service.dart';
 import 'package:client/services/pref_service.dart';
 import 'package:flutter/material.dart';
