@@ -1,14 +1,16 @@
-import 'package:client/services/app_navigator.dart';
-import 'package:client/services/session_manager.dart';
+import 'package:client/core/services/app_navigator.dart';
+import 'package:client/core/services/session_manager.dart';
 import 'package:client/view/dashboard_screen.dart';
 import 'package:client/view/loading_screen.dart';
 import 'package:client/view/login_screen.dart';
 import 'package:client/view/profle_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:loggy/loggy.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SessionManager.instance.initSession();
+  Loggy.initLoggy(logPrinter: const PrettyPrinter());
   runApp(const MyApp());
 }
 

@@ -1,4 +1,4 @@
-import 'package:client/services/session_manager.dart';
+import 'package:client/core/services/session_manager.dart';
 import 'package:flutter/material.dart';
 
 class LoadingScreen extends StatefulWidget {

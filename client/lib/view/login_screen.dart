@@ -1,6 +1,7 @@
-import 'package:client/services/auth_api_service.dart';
-import 'package:client/services/pref_service.dart';
+import 'package:client/core/services/auth_api_service.dart';
+import 'package:client/core/services/pref_service.dart';
 import 'package:flutter/material.dart';
+import 'package:loggy/loggy.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -119,6 +120,7 @@ class _LoginFormState extends State<LoginForm> {
       if (!_formKey.currentState!.validate()) return;
 
       setState(() => _loading = true);
+      await Future.delayed(const Duration(milliseconds: 500));
       final result = await authApi.loginWithMobilePassword(
         mobile: _mobileController.text.trim(),
         password: _passController.text.trim(),
@@ -144,15 +146,9 @@ class _LoginFormState extends State<LoginForm> {
         '/dashboard',
         (route) => false,
       );
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("✅ Login Success")));
     } catch (e) {
       setState(() => _loading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("❌ ${e.toString()}")));
+      logError("Login Error: $e");
     }
   }
 

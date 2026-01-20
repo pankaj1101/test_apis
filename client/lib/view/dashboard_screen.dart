@@ -1,7 +1,7 @@
+import 'package:client/core/services/session_manager.dart';
 import 'package:client/model/dashboard_overview.dart';
 import 'package:client/model/recent_transaction.dart';
-import 'package:client/services/auth_api_service.dart';
-import 'package:client/services/session_manager.dart';
+import 'package:client/core/services/auth_api_service.dart';
 import 'package:client/utils/amount_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -51,28 +51,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
 
       await Future.delayed(const Duration(milliseconds: 2000));
-      final result = await Future.wait([
-        authApi.dashboardOverview(),
-        authApi.recentTransaction(),
-      ]);
 
       if (!mounted) return;
 
+      dashboardData = await authApi.dashboardOverview();
+      recentTransactions = await authApi.recentTransaction();
       setState(() {
-        dashboardData = result[0] as DashboardOverview;
-        recentTransactions = result[1] as RecentTransactionModel;
         isDashboardOverviewLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         isDashboardOverviewLoading = false;
         errorMessage = e.toString();
       });
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error: $e")));
     }
   }
 
@@ -81,96 +73,87 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final size = MediaQuery.sizeOf(context);
     final isMobile = size.width < 900;
 
-    return errorMessage.isEmpty
-        ? Skeletonizer(
-            enabled: isDashboardOverviewLoading,
-            child: Scaffold(
-              backgroundColor: const Color(0xFFF5F7FA),
-              drawer: isMobile ? Drawer(child: _sidebar(isMobile: true)) : null,
-              appBar: isMobile
-                  ? AppBar(
-                      title: const Text("Dashboard"),
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                      elevation: 0,
-                      actions: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pushNamed(context, "/profile");
-                            },
-                            child: CircleAvatar(
-                              radius: 18,
-                              child: const Icon(Icons.person_rounded),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  : null,
-              body: Row(
-                children: [
-                  if (!isMobile) _sidebar(),
-
-                  // MAIN CONTENT
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(18),
-                      child: Column(
-                        children: [
-                          // TOP BAR
-                          if (!isMobile) _topBar(),
-
-                          const SizedBox(height: 18),
-
-                          // CONTENT BODY
-                          Expanded(
-                            child: SingleChildScrollView(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    "Overview",
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-
-                                  // STATS CARDS
-                                  _statsCards(isMobile),
-
-                                  const SizedBox(height: 24),
-
-                                  // TABLE
-                                  _recentTransactionsTable(),
-
-                                  const SizedBox(height: 24),
-
-                                  // CHART PLACEHOLDER
-                                  _chartPlaceholder(),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+    return Skeletonizer(
+      enabled: isDashboardOverviewLoading,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF5F7FA),
+        drawer: isMobile ? Drawer(child: _sidebar(isMobile: true)) : null,
+        appBar: isMobile
+            ? AppBar(
+                title: const Text("Dashboard"),
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                elevation: 0,
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, "/profile");
+                      },
+                      child: CircleAvatar(
+                        radius: 18,
+                        child: const Icon(Icons.person_rounded),
                       ),
                     ),
                   ),
                 ],
+              )
+            : null,
+        body: Row(
+          children: [
+            if (!isMobile) _sidebar(),
+
+            // MAIN CONTENT
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  children: [
+                    // TOP BAR
+                    if (!isMobile) _topBar(),
+
+                    const SizedBox(height: 18),
+
+                    // CONTENT BODY
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Overview",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // STATS CARDS
+                            _statsCards(isMobile),
+
+                            const SizedBox(height: 24),
+
+                            // TABLE
+                            _recentTransactionsTable(),
+
+                            const SizedBox(height: 24),
+
+                            // CHART PLACEHOLDER
+                            _chartPlaceholder(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          )
-        : Scaffold(
-            body: Center(
-              child: Text(
-                "Error: $errorMessage",
-                style: const TextStyle(color: Colors.red, fontSize: 16),
-              ),
-            ),
-          );
+          ],
+        ),
+      ),
+    );
   }
 
   // ---------------- SIDEBAR ----------------
@@ -267,9 +250,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   '/login',
                   (route) => false,
                 );
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text("Logout clicked")));
               });
             },
           ),
