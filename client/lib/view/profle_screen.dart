@@ -110,10 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       child: Column(
         children: [
-          const CircleAvatar(
-            radius: 50,
-            backgroundImage: NetworkImage("https://i.pravatar.cc/300"),
-          ),
+          const CircleAvatar(radius: 50, backgroundColor: Color(0xFFF3F4F6)),
           const SizedBox(height: 14),
           Text(
             nameController.text,

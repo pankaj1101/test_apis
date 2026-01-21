@@ -73,84 +73,91 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final size = MediaQuery.sizeOf(context);
     final isMobile = size.width < 900;
 
-    return Skeletonizer(
-      enabled: isDashboardOverviewLoading,
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF5F7FA),
-        drawer: isMobile ? Drawer(child: _sidebar(isMobile: true)) : null,
-        appBar: isMobile
-            ? AppBar(
-                title: const Text("Dashboard"),
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                elevation: 0,
-                actions: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context, "/profile");
-                      },
-                      child: CircleAvatar(
-                        radius: 18,
-                        child: const Icon(Icons.person_rounded),
-                      ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FA),
+      drawer: isMobile ? Drawer(child: _sidebar(isMobile: true)) : null,
+      appBar: isMobile
+          ? AppBar(
+              title: const Text("Dashboard"),
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              elevation: 0,
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, "/profile");
+                    },
+                    child: CircleAvatar(
+                      radius: 18,
+                      backgroundColor: Color(0xFFF3F4F6),
+                      child: const Icon(Icons.person_rounded),
                     ),
                   ),
-                ],
-              )
-            : null,
-        body: Row(
-          children: [
-            if (!isMobile) _sidebar(),
+                ),
+              ],
+            )
+          : null,
+      body: RefreshIndicator(
+        onRefresh: () {
+          return getDashboardDetails();
+        },
+        child: Skeletonizer(
+          enabled: isDashboardOverviewLoading,
 
-            // MAIN CONTENT
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  children: [
-                    // TOP BAR
-                    if (!isMobile) _topBar(),
+          child: Row(
+            children: [
+              if (!isMobile) _sidebar(),
 
-                    const SizedBox(height: 18),
+              // MAIN CONTENT
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    children: [
+                      // TOP BAR
+                      if (!isMobile) _topBar(),
 
-                    // CONTENT BODY
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Overview",
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w800,
+                      const SizedBox(height: 18),
+
+                      // CONTENT BODY
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Overview",
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w800,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 16),
+                              const SizedBox(height: 16),
 
-                            // STATS CARDS
-                            _statsCards(isMobile),
+                              // STATS CARDS
+                              _statsCards(isMobile),
 
-                            const SizedBox(height: 24),
+                              const SizedBox(height: 24),
 
-                            // TABLE
-                            _recentTransactionsTable(),
+                              // TABLE
+                              _recentTransactionsTable(),
 
-                            const SizedBox(height: 24),
+                              const SizedBox(height: 24),
 
-                            // CHART PLACEHOLDER
-                            _chartPlaceholder(),
-                          ],
+                              // CHART PLACEHOLDER
+                              _chartPlaceholder(),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -475,7 +482,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           DataCell(
                             Container(
-                              padding: const .symmetric(
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: 10,
                                 vertical: 6,
                               ),
