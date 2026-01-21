@@ -10,7 +10,7 @@ const generateAccessToken = (user) => {
       id: user.id,
       name: user.name,
       mobile: user.mobile,
-      role: "admin",
+      role: user.role,
       permissions: ["read", "write", "update", "delete"],
     },
     JWT_SECRET,
