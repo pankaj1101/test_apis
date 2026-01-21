@@ -13,13 +13,13 @@ class RecentTransactionModel {
     if (json['data'] != null) {
       data = <DashboardTransactionData>[];
       json['data'].forEach((v) {
-        data!.add(new DashboardTransactionData.fromJson(v));
+        data!.add(DashboardTransactionData.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['success'] = success;
     data['status'] = status;
     data['message'] = message;
@@ -54,7 +54,7 @@ class DashboardTransactionData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['order_id'] = orderId;
     data['customer_name'] = customerName;
     data['amount'] = amount;

@@ -121,6 +121,8 @@ class _LoginFormState extends State<LoginForm> {
 
       setState(() => _loading = true);
       await Future.delayed(const Duration(milliseconds: 500));
+
+      // Login API Call
       final result = await authApi.loginWithMobilePassword(
         mobile: _mobileController.text.trim(),
         password: _passController.text.trim(),

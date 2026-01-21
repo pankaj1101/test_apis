@@ -17,7 +17,6 @@ class ApiClient with UiLoggy {
 
   final String baseUrl = ApiEndpoint.baseUrl;
 
-  // ✅ MAIN GET METHOD WITH AUTO REFRESH
   Future<dynamic> get(String endpoint) async {
     final uri = Uri.parse(endpoint);
 
@@ -27,10 +26,11 @@ class ApiClient with UiLoggy {
     http.Response response = await http.get(uri, headers: headers);
     _log(uri.toString(), jsonEncode(headers), "GET", "", response);
 
-    // ✅ if access token expired
+    // If access token expired
     if (response.statusCode == 401) {
       final refreshed = await _refreshToken();
 
+      // Navigate to login if refresh failed
       if (!refreshed) {
         await SessionManager.instance.logout();
         AppNavigator.navKey.currentState?.pushNamedAndRemoveUntil(
@@ -40,16 +40,9 @@ class ApiClient with UiLoggy {
         throw Exception("Session expired. Please login again.");
       }
 
-      // ✅ retry after refresh
+      // Retry after refresh
       final newToken = await PrefService.getAccessToken();
       final newHeaders = _headers(token: newToken);
-
-      // _log(
-      //   uri.toString(),
-      //   jsonEncode(newHeaders),
-      //   "GET (Retry After Refresh)",
-      //   "",
-      // );
 
       response = await http.get(uri, headers: newHeaders);
       _log(
@@ -59,7 +52,6 @@ class ApiClient with UiLoggy {
         "",
         response,
       );
-      // _logResponse(uri.toString(), response);
     }
 
     return _handleResponse(response);
@@ -92,6 +84,7 @@ class ApiClient with UiLoggy {
       response,
     );
 
+    // If access token expired
     if (response.statusCode == 401 && authRequired) {
       final refreshed = await _refreshToken();
 
@@ -102,11 +95,13 @@ class ApiClient with UiLoggy {
       final newToken = await PrefService.getAccessToken();
       final newHeaders = _headers(token: newToken);
 
+      // Retry after refresh
       response = await http.post(
         uri,
         headers: newHeaders,
         body: jsonEncode(body),
       );
+
       _log(
         uri.toString(),
         jsonEncode(newHeaders),
@@ -165,6 +160,7 @@ class ApiClient with UiLoggy {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"refresh_token": refreshToken}),
       );
+
       _log(
         uri.toString(),
         jsonEncode({"Content-Type": "application/json"}),
@@ -179,6 +175,7 @@ class ApiClient with UiLoggy {
       }
 
       final json = jsonDecode(response.body);
+
       final newAccessToken = json["access_token"];
       final newRefreshToken = json["refresh_token"];
 
@@ -203,7 +200,6 @@ class ApiClient with UiLoggy {
     }
   }
 
-  // ✅ Your log format (same output style), now using loggy
   void _log(
     String uri,
     String headers,

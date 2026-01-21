@@ -2,7 +2,7 @@ import 'package:client/core/services/session_manager.dart';
 import 'package:client/model/dashboard_overview.dart';
 import 'package:client/model/recent_transaction.dart';
 import 'package:client/core/services/auth_api_service.dart';
-import 'package:client/utils/amount_formatter.dart';
+import 'package:client/core/utils/amount_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -17,6 +17,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int selectedIndex = 0;
   DashboardOverview? dashboardData;
   RecentTransactionModel? recentTransactions;
+  bool isDashboardOverviewLoading = false;
+  String errorMessage = "";
+  final authApi = AuthApiService();
 
   final List<String> menuItems = [
     "Dashboard",
@@ -37,14 +40,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    getUserDetails();
+    getDashboardDetails();
   }
 
-  bool isDashboardOverviewLoading = false;
-  String errorMessage = "";
-  final authApi = AuthApiService();
-
-  Future<void> getUserDetails() async {
+  Future<void> getDashboardDetails() async {
     try {
       if (mounted) {
         setState(() => isDashboardOverviewLoading = true);
@@ -56,6 +55,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       dashboardData = await authApi.dashboardOverview();
       recentTransactions = await authApi.recentTransaction();
+
       setState(() {
         isDashboardOverviewLoading = false;
       });
@@ -245,6 +245,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               await SessionManager.instance.logout().then((_) {
                 if (!mounted) return;
 
+                // Navigate to login screen
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   '/login',

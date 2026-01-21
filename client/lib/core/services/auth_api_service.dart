@@ -1,6 +1,5 @@
 import 'package:client/core/services/api_endpoint.dart';
 import 'package:client/core/services/api_service.dart';
-import 'package:client/core/services/pref_service.dart';
 import 'package:client/model/dashboard_overview.dart';
 import 'package:client/model/login_response_model.dart';
 import 'package:client/model/recent_transaction.dart';
@@ -15,10 +14,9 @@ class AuthApiService {
         "mobile": mobile,
         "password": password,
       });
-
       return LoginResponseModel.fromJson(response);
     } catch (e) {
-      throw Exception(e);
+      rethrow;
     }
   }
 
@@ -27,7 +25,6 @@ class AuthApiService {
       final response = await ApiClient.instance.get(
         ApiEndpoint.dashboardOverview,
       );
-
       return DashboardOverview.fromJson(response);
     } catch (e) {
       rethrow;
@@ -41,19 +38,7 @@ class AuthApiService {
       );
       return RecentTransactionModel.fromJson(response);
     } catch (e) {
-      throw Exception(e);
-    }
-  }
-
-  Future<Map<String, dynamic>> refreshTokenApiCall() async {
-    try {
-      final refreshToken = await PrefService.getRefreshToken();
-      final response = await ApiClient.instance.post(ApiEndpoint.refreshToken, {
-        "refresh_token": refreshToken,
-      });
-      return response as Map<String, dynamic>;
-    } catch (e) {
-      throw Exception(e);
+      rethrow;
     }
   }
 }
